@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var server = require('gulp-server-livereload');
 var clean = require('gulp-rimraf');
 var sequence = require('run-sequence');
+var watch = require('gulp-watch');
 
 gulp.task('build', function(callback) {
   sequence('clean', ['copy-html', 'browserify'], callback);
@@ -28,7 +29,15 @@ gulp.task('build', function(callback) {
     // nothing here for now
   });
 
+gulp.task('watch', function() {
+  // rebuild when jsx, js, html change, in src directory, including subdirectories
+  watch('./src/**/*.{jsx,js,html}', function() {
+    gulp.start('build');
+  });
+});
+
 gulp.task('server', ['build'], function() {
+  gulp.start('watch');
   gulp
   .src('./dist') // everything from ./dist directory
   .pipe(server({ // pipe to server object
