@@ -20,6 +20,7 @@
     "gulp-watch": "^4.3.5",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
-    "run-sequence": "^1.1.5"
+    "run-sequence": "^1.1.5",
+    "vinyl-source-stream": "^1.1.0"
   }
 }

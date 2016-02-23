@@ -3,6 +3,9 @@ var server = require('gulp-server-livereload');
 var clean = require('gulp-rimraf');
 var sequence = require('run-sequence');
 var watch = require('gulp-watch');
+var browserify = require('browserify');
+var babelify = require('babelify');
+var source = require('vinyl-source-stream');
 
 gulp.task('build', function(callback) {
   sequence('clean', ['copy-html', 'browserify'], callback);
@@ -26,7 +29,16 @@ gulp.task('build', function(callback) {
 
   // convert React components to be used in the browser
   gulp.task('browserify', function() {
-    // nothing here for now
+    var babelifyConfig = babelify.configure({presets: ['es2015', 'react'], extensions: ['.jsx']});
+
+    return browserify({
+        entries: 'src/app.jsx', // the same as "--extension=.jsx src/**/*.jsx"
+        extensions: ['.jsx']
+      })
+      .transform(babelifyConfig) // the same as -t command line parameter
+      .bundle() // "readable stream with the javascript file contents"
+      .pipe(source('bundle.js')) // "conventional text stream at the start of our gulp pipeline", wrapped with "pipe" method
+      .pipe(gulp.dest('dist')); // standard gulp way to redirect gulp pipe to directory
   });
 
 gulp.task('watch', function() {
